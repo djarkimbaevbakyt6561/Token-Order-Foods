@@ -8,7 +8,7 @@ const initialState = {
     token: "",
     user: {
         name: "",
-        gmail: "",
+        email: "",
         password: "",
         id: ""
     }
@@ -25,8 +25,12 @@ export const authSlice = createSlice({
         builder.addCase(signUpRequest.fulfilled, (state, action) => {
             state.isAuthorization = true;
             state.token = action.payload.token;
-            console.log(state);
             state.isLoading = true
+            state.user = {
+                name: action.payload.user.name,
+                email: action.payload.user.email,
+                id: action.payload.user.id,
+            }
         });
         builder.addCase(signUpRequest.pending, (state, action) => {
             state.isLoading = false
@@ -37,8 +41,8 @@ export const authSlice = createSlice({
         builder.addCase(signInRequest.fulfilled, (state, action) => {
             state.isAuthorization = true;
             state.token = action.payload.token;
-            state.user = action.payload.user;
             state.isLoading = true
+            state.user = action.payload.user;
         });
         builder.addCase(signInRequest.pending, (state, action) => {
             state.isLoading = false

@@ -8,6 +8,7 @@ import { signUpActions } from '../components/store/sign/signUp';
 import { USERS_ROLE } from '../constants';
 import { fetchRequest } from '../components/lib/fetchAPI';
 import { signUpRequest } from '../components/store/auth/authThunk';
+import { snackBarActions } from '../components/store/snackBar';
 const SignUp = () => {
   const signUp = useSelector((store) => store.signUp);
   const dispatch = useDispatch();
@@ -30,18 +31,23 @@ const SignUp = () => {
     dispatch(signUpActions.confirmPasswordValidHandler(e.target.value));
     dispatch(signUpActions.formValidHandler());
   };
-  const submitHandler = (e) => {
-    e.preventDefault();
-    console.log(signUp.formValid);
-    if (signUp.formValid === true) {
-      console.log('Gi');
-      const data = {
-        name: signUp.name,
-        email: signUp.email,
-        password: signUp.password,
-        role: USERS_ROLE.ADMIN,
-      };
-      dispatch(signUpRequest(data)).unwrap().then(navigate('/signin'));
+
+  const submitHandler = async (e) => {
+    try {
+      e.preventDefault();
+      if (signUp.formValid === true) {
+        const data = {
+          name: signUp.name,
+          email: signUp.email,
+          password: signUp.password,
+          role: USERS_ROLE.ADMIN,
+        };
+        await dispatch(signUpRequest(data)).unwrap()
+        dispatch(snackBarActions.successHandler('Successfully Logged In'));
+        navigate("/")
+      }
+    } catch (error) {
+      dispatch(snackBarActions.errorHandler(error.message));
     }
   };
   return (
